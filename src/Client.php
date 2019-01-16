@@ -1274,8 +1274,73 @@ class Client
         return $this->process_response($response);
     }
 
+    /** 
+     * Get next firewall rule index for
+     * -----------------------------------------------------------
+     * returns an int of the next firewall rule index.
+     * requreid parameter <ruleSet> = name of the ruleset
+     * optional parameter <beforePredefined> = boolean if the rule is before or after pre-defined rules
+    */
+    public function get_next_firewallrule_index($ruleSet, $beforePredefined=false) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $fwRuleList = $this->list_firewallrules();
+
+        //print_r($fwRuleList);
+
+        //If the rule set is empty, we know we can start here.
+        if (empty($fwRuleList)) {
+            if ($beforePredefined) {
+                $nextIndex = 2000;
+            } else {
+                $nextIndex = 4000;
+            }
+        } else {
+            //Check the ruleset name is valid
+            if (!in_array($ruleSet, [
+              "WAN_IN",
+              "WAN_OUT",
+              "WAN_LOCAL",
+              "LAN_IN",
+              "LAN_OUT",
+              "LAN_LOCAL",
+              "GUEST_IN",
+              "GUEST_OUT",
+              "GUEST_LOCAL"
+            ])) {
+                throw new Exception("Ruleset is not valid");
+            }
+            $ruleIndexes = [];
+            foreach ($fwRuleList as $fwRule) {
+                if ($fwRule->ruleset == $ruleSet) {
+                    if ($beforePredefined) {
+                        if ( ($fwRule->{"rule_index"} >= 2000) && ($fwRule->{"rule_index"} < 3000) ) {
+                            array_push($ruleIndexes, $fwRule->{"rule_index"});
+                        }
+                    } else {
+                        //I don't think there is an upper limit
+                        if ($fwRule->{"rule_index"} >= 4000) {
+                            array_push($ruleIndexes, $fwRule->{"rule_index"});
+                        }
+                    }
+                    
+                }
+            }
+            sort($ruleIndexes);
+            $nextIndex = $ruleIndexes[sizeof($ruleIndexes)-1] + 1;
+        }
+
+        if (!isset($nextIndex)) {
+            throw new Exception("Unable to determine the next index.");
+        }
+
+        return $nextIndex;
+    }
+
     /**
-     * Create Firewall rules (using REST)
+     * Create Firewall rules
      * ----------------------------------
      * Create a firewall rule
      * 
@@ -1293,7 +1358,7 @@ class Client
     }
 
     /**
-     * Delete firewall rule (using REST)
+     * Delete firewall rule
      * ---------------------------------
      * returns true on success
      * required parameter <rule_id> = id of the firewall rule
