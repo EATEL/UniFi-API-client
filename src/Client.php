@@ -1275,6 +1275,42 @@ class Client
     }
 
     /**
+     * Create Firewall rules (using REST)
+     * ----------------------------------
+     * Create a firewall rule
+     * 
+     */
+    public function create_firewallrule($ruleData) 
+    {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+        $this->request_type = 'POST';
+        $json = json_encode($ruleData);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/rest/firewallrule', 'json=' . $json);
+
+        return $this->process_response($response);
+    }
+
+    /**
+     * Delete firewall rule (using REST)
+     * ---------------------------------
+     * returns true on success
+     * required parameter <rule_id> = id of the firewall rule
+     */
+    public function delete_firewallrule($rule_id)
+    {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'DELETE';
+        $response = $this->exec_curl('/api/s/' . $this->site . '/rest/firewallrule/' . trim($rule_id));
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
      * List health metrics
      * -------------------
      * returns an array of health metric objects
