@@ -7,3 +7,6 @@
 
 # ignore XML files
 *.xml
+
+# Ignore odd testing dir -cca2697
+/testStuff
