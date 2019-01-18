@@ -1628,6 +1628,23 @@ class Client
     }
 
     /**
+     * Set Country (New/Initial)
+     * -------------------------
+     * This call is for new sites
+     */
+    public function set_new_site_country($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = "POST";
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/set/setting/country', 'json=' . $json);
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
      * Set site locale
      * ---------------
      * required parameter <setting> = stdClass object or associative array containing the configuration to apply to the network, must be a (partial)
@@ -1645,6 +1662,22 @@ class Client
         $json               = json_encode($setting);
         $response           = $this->exec_curl('/api/s/' . $this->site . '/rest/setting/locale/' . trim($locale_id),
             'json=' . $json);
+
+        return $this->process_response_boolean($response);
+    }
+    /**
+     * Set Locale (New/Initial)
+     * -------------------------
+     * This call is for new sites
+     */
+    public function set_new_site_locale($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = "POST";
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/set/setting/locale', 'json=' . $json);
 
         return $this->process_response_boolean($response);
     }
@@ -1755,6 +1788,74 @@ class Client
         $json               = json_encode($setting);
         $response           = $this->exec_curl('/api/s/' . $this->site . '/rest/setting/connectivity/' . trim($connectivity_id),
             'json=' . $json);
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
+     * Set Site Auto Speedtest
+     * ---------------------
+     * required parameter <settings>
+     */
+    public function set_site_auto_speedtest($speedTest_id, $settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'PUT';
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/rest/setting/auto_speedtest/' . trim($speedTest_id), 'json=' . $json);
+
+        return $this->process_response($response);
+    }
+
+        /**
+     * Set Site Auto Speedtest (New/Initial)
+     * ---------------------
+     * required parameter <settings>
+     */
+    public function set_new_site_auto_speedtest($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'POST';
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/set/setting/auto_speedtest', 'json=' . $json);
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
+     * Set Site Provider Capabilites
+     * -----------------------------
+     * required parameter <settings>
+     */
+    public function set_site_provider_capabilities($providerCapabilities, $settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'PUT';
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/rest/setting/provider_capabilities/' . trim($providerCapabilities), 'json=' . $json);
+
+        return $this->process_response($response);
+    }
+
+    /**
+     * Set Site Provider Capabilites (New/Initial)
+     * -----------------------------
+     * required parameter <settings>
+     */
+    public function set_new_site_provider_capabilities($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'POST';
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/set/setting/provider_capabilities', 'json=' . $json);
 
         return $this->process_response_boolean($response);
     }
