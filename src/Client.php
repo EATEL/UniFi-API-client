@@ -1957,6 +1957,38 @@ class Client
         return $this->process_response_boolean($response);
     }
 
+    /** Grant an Admin permission
+     * -------------------------
+     */
+    public function grant_admin_site_privs($sitePrivs) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'POST';
+        $json = json_encode($sitePrivs);
+        $response = $this->exec_curl("/api/s/" . $this->site . "/cmd/sitemgr", "json=" . $json);
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
+     * Set Admin e-mail settings
+     * 
+     */
+    public function grant_admin_site_emails($emailSettings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'POST';
+        $json = json_encode($emailSettings);
+        $response = $this->exec_curl("/api/s/" . $this->site . "/cmd/sitemgr", "json=" . $json);
+
+        return $this->process_response_boolean($response);
+
+    }
+
     /**
      * Revoke an admin
      * ---------------
@@ -1978,6 +2010,7 @@ class Client
 
         return $this->process_response_boolean($response);
     }
+
 
     /**
      * List wlan_groups
