@@ -3231,6 +3231,23 @@ class Client
     }
 
     /**
+     * Set local Radius Server 
+     * ----------------------------
+     * return true on success
+     * required parameter <settings> --> Object/Assoc. Array with parameters
+     */
+    public function set_local_radius($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = "POST";
+        $json = json_encode($settings);
+        $response = $this->exec_curl("/api/s/" . $this->site . "/set/setting/radius", "json=" . $json);
+        return $this->process_response($response);
+    }
+
+    /**
      * List Radius profiles (using REST)
      * --------------------------------------
      * returns an array of objects containing all Radius profiles for the current site
