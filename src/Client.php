@@ -3433,6 +3433,41 @@ class Client
 
         return $this->process_response_boolean($response);
     }
+    /**
+     * Add a DHCP Option
+     * ------------------
+     * return option on success
+     * 
+     */
+    public function create_dhcp_option($dhcpOption)
+    {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = "POST";
+        $json = json_encode($dhcpOption);
+        $response = $this->exec_curl("/api/s/" . $this->site . "/rest/dhcpoption", 'json=' . $json);
+
+        return $this->process_response($response);
+    }
+
+    /**
+     * List DHCP Options
+     * ------------------
+     * return option on success
+     * 
+     */
+    public function list_dhcp_options()
+    {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+        $this->request_type = "GET";
+        $response = $this->exec_curl("/api/s/" . $this->site . "/rest/dhcpoption");
+
+        return $this->process_response($response);
+    }
 
     /**
      * Execute specific command
@@ -3455,6 +3490,7 @@ class Client
 
         return $this->process_response_boolean($response);
     }
+
 
     /****************************************************************
      * "Aliases" for deprecated functions from here, to support
