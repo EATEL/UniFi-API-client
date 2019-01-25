@@ -1628,6 +1628,23 @@ class Client
     }
 
     /**
+     * Set Country (New/Initial)
+     * -------------------------
+     * This call is for new sites
+     */
+    public function set_new_site_country($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = "POST";
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/set/setting/country', 'json=' . $json);
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
      * Set site locale
      * ---------------
      * required parameter <setting> = stdClass object or associative array containing the configuration to apply to the network, must be a (partial)
@@ -1645,6 +1662,22 @@ class Client
         $json               = json_encode($setting);
         $response           = $this->exec_curl('/api/s/' . $this->site . '/rest/setting/locale/' . trim($locale_id),
             'json=' . $json);
+
+        return $this->process_response_boolean($response);
+    }
+    /**
+     * Set Locale (New/Initial)
+     * -------------------------
+     * This call is for new sites
+     */
+    public function set_new_site_locale($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = "POST";
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/set/setting/locale', 'json=' . $json);
 
         return $this->process_response_boolean($response);
     }
@@ -1760,6 +1793,74 @@ class Client
     }
 
     /**
+     * Set Site Auto Speedtest
+     * ---------------------
+     * required parameter <settings>
+     */
+    public function set_site_auto_speedtest($speedTest_id, $settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'PUT';
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/rest/setting/auto_speedtest/' . trim($speedTest_id), 'json=' . $json);
+
+        return $this->process_response($response);
+    }
+
+        /**
+     * Set Site Auto Speedtest (New/Initial)
+     * ---------------------
+     * required parameter <settings>
+     */
+    public function set_new_site_auto_speedtest($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'POST';
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/set/setting/auto_speedtest', 'json=' . $json);
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
+     * Set Site Provider Capabilites
+     * -----------------------------
+     * required parameter <settings>
+     */
+    public function set_site_provider_capabilities($providerCapabilities, $settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'PUT';
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/rest/setting/provider_capabilities/' . trim($providerCapabilities), 'json=' . $json);
+
+        return $this->process_response($response);
+    }
+
+    /**
+     * Set Site Provider Capabilites (New/Initial)
+     * -----------------------------
+     * required parameter <settings>
+     */
+    public function set_new_site_provider_capabilities($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'POST';
+        $json = json_encode($settings);
+        $response = $this->exec_curl('/api/s/' . $this->site . '/set/setting/provider_capabilities', 'json=' . $json);
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
      * List admins
      * -----------
      * returns an array containing administrator objects for selected site
@@ -1856,6 +1957,38 @@ class Client
         return $this->process_response_boolean($response);
     }
 
+    /** Grant an Admin permission
+     * -------------------------
+     */
+    public function grant_admin_site_privs($sitePrivs) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'POST';
+        $json = json_encode($sitePrivs);
+        $response = $this->exec_curl("/api/s/" . $this->site . "/cmd/sitemgr", "json=" . $json);
+
+        return $this->process_response_boolean($response);
+    }
+
+    /**
+     * Set Admin e-mail settings
+     * 
+     */
+    public function grant_admin_site_emails($emailSettings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = 'POST';
+        $json = json_encode($emailSettings);
+        $response = $this->exec_curl("/api/s/" . $this->site . "/cmd/sitemgr", "json=" . $json);
+
+        return $this->process_response_boolean($response);
+
+    }
+
     /**
      * Revoke an admin
      * ---------------
@@ -1877,6 +2010,7 @@ class Client
 
         return $this->process_response_boolean($response);
     }
+
 
     /**
      * List wlan_groups
@@ -3130,6 +3264,23 @@ class Client
     }
 
     /**
+     * Set local Radius Server 
+     * ----------------------------
+     * return true on success
+     * required parameter <settings> --> Object/Assoc. Array with parameters
+     */
+    public function set_local_radius($settings) {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = "POST";
+        $json = json_encode($settings);
+        $response = $this->exec_curl("/api/s/" . $this->site . "/set/setting/radius", "json=" . $json);
+        return $this->process_response($response);
+    }
+
+    /**
      * List Radius profiles (using REST)
      * --------------------------------------
      * returns an array of objects containing all Radius profiles for the current site
@@ -3282,6 +3433,41 @@ class Client
 
         return $this->process_response_boolean($response);
     }
+    /**
+     * Add a DHCP Option
+     * ------------------
+     * return option on success
+     * 
+     */
+    public function create_dhcp_option($dhcpOption)
+    {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+
+        $this->request_type = "POST";
+        $json = json_encode($dhcpOption);
+        $response = $this->exec_curl("/api/s/" . $this->site . "/rest/dhcpoption", 'json=' . $json);
+
+        return $this->process_response($response);
+    }
+
+    /**
+     * List DHCP Options
+     * ------------------
+     * return option on success
+     * 
+     */
+    public function list_dhcp_options()
+    {
+        if (!$this->is_loggedin) {
+            return false;
+        }
+        $this->request_type = "GET";
+        $response = $this->exec_curl("/api/s/" . $this->site . "/rest/dhcpoption");
+
+        return $this->process_response($response);
+    }
 
     /**
      * Execute specific command
@@ -3304,6 +3490,7 @@ class Client
 
         return $this->process_response_boolean($response);
     }
+
 
     /****************************************************************
      * "Aliases" for deprecated functions from here, to support
